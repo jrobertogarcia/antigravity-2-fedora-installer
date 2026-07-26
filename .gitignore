@@ -3,3 +3,4 @@ Antigravity.tar.gz
 Antigravity IDE.tar.gz
 *.tar.gz
 .vscode/
+.antigravitycli/

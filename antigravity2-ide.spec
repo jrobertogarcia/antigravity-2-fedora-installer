@@ -9,7 +9,7 @@
 
 
 Name:           antigravity2-ide
-Version:        2.1.1
+Version:        2.5.5
 Release:        1%{?dist}
 Summary:        Antigravity 2.0 IDE
 
@@ -17,8 +17,8 @@ License:        Proprietary (Google Terms of Service)
 URL:            https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/index.html
 ExclusiveArch:  x86_64 aarch64
 
-Source0:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.1.1-6123990880747520/linux-x64/Antigravity%20IDE.tar.gz
-Source1:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.1.1-6123990880747520/linux-arm/Antigravity%20IDE.tar.gz
+Source0:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.5.5-4923483625488384/linux-x64/Antigravity%20IDE.tar.gz
+Source1:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.5.5-4923483625488384/linux-arm/Antigravity%20IDE.tar.gz
 Source2:        antigravity2-ide.desktop
 Source3:        antigravity.png
 
@@ -82,7 +82,10 @@ install -m 644 %{SOURCE3} %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{n
 %{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 
 %changelog
-* Wed Jun 25 2026 Roberto Garcia <jrobertogarcia16@gmail.com> - 2.1.1-1
+* Fri Aug 14 2026 Rajeev RK <rajeevrk@xlncenterprises.com> - 2.5.5-1
+- Update IDE to version 2.5.5 with new download URLs
+
+* Thu Jun 25 2026 Roberto Garcia <jrobertogarcia16@gmail.com> - 2.1.1-1
 - Update to version 2.1.1 with new download URLs and native ARM64 support
 
 * Thu Jun 04 2026 Roberto Garcia <jrobertogarcia16@gmail.com> - 2.0.4-1

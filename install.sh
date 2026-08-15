@@ -27,14 +27,14 @@ NC='\033[0m' # No Color
 INSTALL_SCOPE="system"
 APP_MODE="" # Starts empty to force interaction if not provided
 
-VERSION_IDE="2.1.1"
-VERSION_AGENT="2.4.2"
+VERSION_IDE="2.5.5"
+VERSION_AGENT="2.8.1"
 APP_VERSION=""
 
-DOWNLOAD_URL_IDE_X64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.1.1-6123990880747520/linux-x64/Antigravity%20IDE.tar.gz"
-DOWNLOAD_URL_IDE_ARM64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.1.1-6123990880747520/linux-arm/Antigravity%20IDE.tar.gz"
-DOWNLOAD_URL_AGENT_X64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.4.2-6711062033203200/linux-x64/Antigravity.tar.gz"
-DOWNLOAD_URL_AGENT_ARM64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.4.2-6711062033203200/linux-arm/Antigravity.tar.gz"
+DOWNLOAD_URL_IDE_X64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.5.5-4923483625488384/linux-x64/Antigravity%20IDE.tar.gz"
+DOWNLOAD_URL_IDE_ARM64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.5.5-4923483625488384/linux-arm/Antigravity%20IDE.tar.gz"
+DOWNLOAD_URL_AGENT_X64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.8.1-6512087774658560/linux-x64/Antigravity.tar.gz"
+DOWNLOAD_URL_AGENT_ARM64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.8.1-6512087774658560/linux-arm/Antigravity.tar.gz"
 DOWNLOAD_URL_IDE=""
 DOWNLOAD_URL_AGENT=""
 
@@ -55,6 +55,47 @@ escalate_cmd() {
     else
         "$@"
     fi
+}
+
+# Query online release metadata to dynamically fetch the latest available version & download URL
+fetch_latest_version() {
+    local mode="$1"
+    local arch="$2"
+    echo -e "${YELLOW}Checking online for the latest ${mode} release...${NC}"
+
+    local aur_pkg="antigravity"
+    [[ "$mode" == "ide" ]] && aur_pkg="antigravity-ide"
+
+    local metadata
+    metadata=$(curl -sSL --max-time 6 "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=${aur_pkg}" 2>/dev/null || true)
+
+    if [[ -n "$metadata" ]]; then
+        local parsed_ver parsed_build
+        parsed_ver=$(echo "$metadata" | grep '^pkgver=' | cut -d'=' -f2 | tr -d '[:space:]')
+        parsed_build=$(echo "$metadata" | grep '^_build=' | cut -d'=' -f2 | tr -d '[:space:]')
+
+        if [[ -n "$parsed_ver" && -n "$parsed_build" ]]; then
+            echo -e "${GREEN}✓ Online release check successful: Latest available is v${parsed_ver}${NC}"
+            LATEST_ONLINE_VER="$parsed_ver"
+            if [[ "$mode" == "ide" ]]; then
+                if [[ "$arch" == "aarch64" ]]; then
+                    LATEST_ONLINE_URL="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/${parsed_ver}-${parsed_build}/linux-arm/Antigravity%20IDE.tar.gz"
+                else
+                    LATEST_ONLINE_URL="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/${parsed_ver}-${parsed_build}/linux-x64/Antigravity%20IDE.tar.gz"
+                fi
+            else
+                if [[ "$arch" == "aarch64" ]]; then
+                    LATEST_ONLINE_URL="https://storage.googleapis.com/antigravity-public/antigravity-hub/${parsed_ver}-${parsed_build}/linux-arm/Antigravity.tar.gz"
+                else
+                    LATEST_ONLINE_URL="https://storage.googleapis.com/antigravity-public/antigravity-hub/${parsed_ver}-${parsed_build}/linux-x64/Antigravity.tar.gz"
+                fi
+            fi
+            return 0
+        fi
+    fi
+
+    echo -e "${YELLOW}Notice: Online version lookup unavailable. Using bundled default version.${NC}"
+    return 1
 }
 
 # Print usage instructions
@@ -179,8 +220,19 @@ else
     [[ -z "$DOWNLOAD_URL" ]] && DOWNLOAD_URL="$DOWNLOAD_URL_AGENT"
 fi
 
+# Automatically check online for the latest version if no custom URL was provided
+LATEST_ONLINE_VER=""
+LATEST_ONLINE_URL=""
+if [[ -z "${DOWNLOAD_URL:-}" || "$DOWNLOAD_URL" == "$DOWNLOAD_URL_IDE" || "$DOWNLOAD_URL" == "$DOWNLOAD_URL_AGENT" ]]; then
+    if fetch_latest_version "$APP_MODE" "$ARCH"; then
+        APP_VERSION="$LATEST_ONLINE_VER"
+        DOWNLOAD_URL="$LATEST_ONLINE_URL"
+    fi
+fi
+
 echo -e "\n${BLUE}Selected variant: ${BOLD}${APP_NAME_PRETTY}${NC}"
 echo -e "${BLUE}Targeting scope: ${BOLD}${INSTALL_SCOPE}${NC}"
+echo -e "${BLUE}Target version:  ${BOLD}v${APP_VERSION}${NC}"
 
 # Define paths based on install scope and dynamic name
 if [[ "$INSTALL_SCOPE" == "system" ]]; then
@@ -215,22 +267,32 @@ if [[ "$CURRENT_VERSION" != "none" ]]; then
     if [[ "$CURRENT_VERSION" == "legacy" ]]; then
         echo -e "${GREEN}Upgrade Notice: An existing installation was detected. Upgrading ${APP_NAME_PRETTY} to v${APP_VERSION}...${NC}"
     elif [[ "$CURRENT_VERSION" == "$APP_VERSION" ]]; then
-        echo -e "${YELLOW}Notice: ${APP_NAME_PRETTY} v${CURRENT_VERSION} is already installed. Reinstalling...${NC}"
+        echo -e "${YELLOW}Notice: ${APP_NAME_PRETTY} v${CURRENT_VERSION} is already installed on your system.${NC}"
     else
-        echo -e "${GREEN}Upgrade Notice: Upgrading ${APP_NAME_PRETTY} from v${CURRENT_VERSION} to v${APP_VERSION}...${NC}"
+        echo -e "${GREEN}Upgrade Notice: ${APP_NAME_PRETTY} v${CURRENT_VERSION} is installed. Newer version v${APP_VERSION} is available.${NC}"
     fi
 
-    # Upgrade/reinstall interactive confirmation prompt
+    # Interactive confirmation prompt for reinstall/upgrade
     if [[ "$AUTO_CONFIRM" == "false" && "$DRY_RUN" == "false" ]]; then
         if [[ ! -t 0 ]]; then
             echo -e "${YELLOW}Warning: Non-interactive terminal detected. Proceeding automatically...${NC}"
         else
-            echo -ne "\nDo you want to proceed? [Y/n]: "
-            read -r CONFIRM
-            CONFIRM=$(echo "${CONFIRM:-y}" | tr '[:upper:]' '[:lower:]')
-            if [[ "$CONFIRM" != "y" && "$CONFIRM" != "yes" ]]; then
-                echo -e "${RED}Installation aborted by user.${NC}"
-                exit 0
+            if [[ "$CURRENT_VERSION" == "$APP_VERSION" ]]; then
+                echo -ne "\nDo you want to reinstall ${APP_NAME_PRETTY} v${APP_VERSION}? [y/N]: "
+                read -r CONFIRM
+                CONFIRM=$(echo "${CONFIRM:-n}" | tr '[:upper:]' '[:lower:]')
+                if [[ "$CONFIRM" != "y" && "$CONFIRM" != "yes" ]]; then
+                    echo -e "${YELLOW}Reinstallation canceled by user.${NC}"
+                    exit 0
+                fi
+            else
+                echo -ne "\nDo you want to proceed with upgrading to v${APP_VERSION}? [Y/n]: "
+                read -r CONFIRM
+                CONFIRM=$(echo "${CONFIRM:-y}" | tr '[:upper:]' '[:lower:]')
+                if [[ "$CONFIRM" != "y" && "$CONFIRM" != "yes" ]]; then
+                    echo -e "${YELLOW}Upgrade canceled by user.${NC}"
+                    exit 0
+                fi
             fi
         fi
     fi

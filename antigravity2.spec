@@ -9,7 +9,7 @@
 
 
 Name:           antigravity2
-Version:        2.4.2
+Version:        2.8.1
 Release:        1%{?dist}
 Summary:        Antigravity 2.0 Agent
 
@@ -17,8 +17,8 @@ License:        Proprietary (Google Terms of Service)
 URL:            https://storage.googleapis.com/antigravity-public/antigravity-hub/index.html
 ExclusiveArch:  x86_64 aarch64
 
-Source0:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.4.2-6711062033203200/linux-x64/Antigravity.tar.gz
-Source1:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.4.2-6711062033203200/linux-arm/Antigravity.tar.gz
+Source0:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.8.1-6512087774658560/linux-x64/Antigravity.tar.gz#/Antigravity-x64.tar.gz
+Source1:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.8.1-6512087774658560/linux-arm/Antigravity.tar.gz#/Antigravity-arm64.tar.gz
 Source2:        antigravity2.desktop
 Source3:        antigravity.png
 
@@ -83,6 +83,9 @@ install -m 644 %{SOURCE3} %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{n
 %{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 
 %changelog
+* Fri Aug 14 2026 pjv <ezelspinguin@gmail.com> - 2.8.1-1
+- Update to version 2.8.1 with new GCS download URLs
+
 * Sun Jul 26 2026 Roberto Garcia <jrobertogarcia16@gmail.com> - 2.4.2-1
 - Update to version 2.4.2 with new GCS download URLs
 

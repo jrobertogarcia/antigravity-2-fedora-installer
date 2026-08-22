@@ -57,6 +57,9 @@ escalate_cmd() {
     fi
 }
 
+# Options:
+NO_CHECK=false
+
 # Print usage instructions
 show_help() {
     cat << EOF
@@ -66,6 +69,7 @@ Options:
   --mode <ide|agent> Choose target application variant.
   --user             Install to user space (~/.local) without requiring root privileges.
   --url <url>        Override the default download URL.
+  --no-check         Skip online check for latest release (use bundled versions).
   --dry-run          Perform pre-flight checks and package download only. No files written.
   -y, --yes          Automatic yes to prompts (bypass confirmation).
   -h, --help         Show this help message.
@@ -96,6 +100,10 @@ while [[ $# -gt 0 ]]; do
                 echo -e "${RED}Error: --url requires a value.${NC}" >&2
                 exit 1
             fi
+            ;;
+        --no-check)
+            NO_CHECK=true
+            shift
             ;;
         --dry-run)
             DRY_RUN=true
@@ -162,6 +170,81 @@ else
     DOWNLOAD_URL_AGENT="$DOWNLOAD_URL_AGENT_X64"
 fi
 
+# Query authoritative online release metadata to dynamically fetch the latest available version & download URL
+fetch_latest_version() {
+    local mode="$1"
+    local arch="$2"
+
+    echo -e "${YELLOW}Checking https://antigravity.google/download for the latest ${mode} release...${NC}"
+
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+    # Method 1: Use get-latest-versions.py if Python is available
+    if command -v python3 &> /dev/null && [[ -f "$script_dir/get-latest-versions.py" ]]; then
+        local env_output
+        if env_output=$(python3 "$script_dir/get-latest-versions.py" --env 2>/dev/null); then
+            eval "$env_output"
+            if [[ "$mode" == "ide" && -n "${DETECTED_IDE_VERSION:-}" ]]; then
+                APP_VERSION="$DETECTED_IDE_VERSION"
+                if [[ "$arch" == "aarch64" ]]; then
+                    DOWNLOAD_URL="$DETECTED_IDE_URL_ARM64"
+                else
+                    DOWNLOAD_URL="$DETECTED_IDE_URL_X64"
+                fi
+                echo -e "${GREEN}✓ Authoritative release check successful: Latest available is v${APP_VERSION} (Build ${DETECTED_IDE_BUILD})${NC}"
+                return 0
+            elif [[ "$mode" == "agent" && -n "${DETECTED_AGENT_VERSION:-}" ]]; then
+                APP_VERSION="$DETECTED_AGENT_VERSION"
+                if [[ "$arch" == "aarch64" ]]; then
+                    DOWNLOAD_URL="$DETECTED_AGENT_URL_ARM64"
+                else
+                    DOWNLOAD_URL="$DETECTED_AGENT_URL_X64"
+                fi
+                echo -e "${GREEN}✓ Authoritative release check successful: Latest available is v${APP_VERSION} (Build ${DETECTED_AGENT_BUILD})${NC}"
+                return 0
+            fi
+        fi
+    fi
+
+    # Method 2: Native Curl + Regex Fallback (zero external dependencies)
+    local html
+    html=$(curl -sSL --max-time 6 -H "Accept-Encoding: gzip, deflate" -H "User-Agent: Mozilla/5.0" "https://antigravity.google/download" 2>/dev/null | gzip -dc 2>/dev/null || curl -sSL --max-time 6 "https://antigravity.google/download" 2>/dev/null || true)
+
+    if [[ -n "$html" ]]; then
+        if [[ "$mode" == "ide" ]]; then
+            local ide_url
+            if [[ "$arch" == "aarch64" ]]; then
+                ide_url=$(echo "$html" | grep -oE "https://edgedl\.me\.gvt1\.com/edgedl/release2/j0qc3/antigravity/stable/[0-9]+\.[0-9]+\.[0-9]+-[0-9]+/linux-arm/Antigravity(%20|\+)IDE\.tar\.gz" | head -n 1)
+            else
+                ide_url=$(echo "$html" | grep -oE "https://edgedl\.me\.gvt1\.com/edgedl/release2/j0qc3/antigravity/stable/[0-9]+\.[0-9]+\.[0-9]+-[0-9]+/linux-x64/Antigravity(%20|\+)IDE\.tar\.gz" | head -n 1)
+            fi
+            if [[ -n "$ide_url" ]]; then
+                APP_VERSION=$(echo "$ide_url" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+                DOWNLOAD_URL="$ide_url"
+                echo -e "${GREEN}✓ Authoritative release check successful: Latest available is v${APP_VERSION}${NC}"
+                return 0
+            fi
+        else
+            local agent_url
+            if [[ "$arch" == "aarch64" ]]; then
+                agent_url=$(echo "$html" | grep -oE "https://storage\.googleapis\.com/antigravity-public/antigravity-hub/[0-9]+\.[0-9]+\.[0-9]+-[0-9]+/linux-arm/Antigravity\.tar\.gz" | head -n 1)
+            else
+                agent_url=$(echo "$html" | grep -oE "https://storage\.googleapis\.com/antigravity-public/antigravity-hub/[0-9]+\.[0-9]+\.[0-9]+-[0-9]+/linux-x64/Antigravity\.tar\.gz" | head -n 1)
+            fi
+            if [[ -n "$agent_url" ]]; then
+                APP_VERSION=$(echo "$agent_url" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+                DOWNLOAD_URL="$agent_url"
+                echo -e "${GREEN}✓ Authoritative release check successful: Latest available is v${APP_VERSION}${NC}"
+                return 0
+            fi
+        fi
+    fi
+
+    echo -e "${YELLOW}Notice: Online version lookup unavailable. Using bundled default (v${APP_VERSION}).${NC}"
+    return 1
+}
+
 # Define dynamic variables based on selected mode
 if [[ "$APP_MODE" == "ide" ]]; then
     APP_NAME_SHORT="antigravity-ide"
@@ -177,6 +260,11 @@ else
     BINARY_NAME="antigravity"
     APP_VERSION="$VERSION_AGENT"
     [[ -z "$DOWNLOAD_URL" ]] && DOWNLOAD_URL="$DOWNLOAD_URL_AGENT"
+fi
+
+# Automatically check online for the latest version if no custom URL was provided and online check is enabled
+if [[ "$NO_CHECK" == "false" && ( -z "${DOWNLOAD_URL:-}" || "$DOWNLOAD_URL" == "$DOWNLOAD_URL_IDE" || "$DOWNLOAD_URL" == "$DOWNLOAD_URL_AGENT" ) ]]; then
+    fetch_latest_version "$APP_MODE" "$ARCH" || true
 fi
 
 echo -e "\n${BLUE}Selected variant: ${BOLD}${APP_NAME_PRETTY}${NC}"

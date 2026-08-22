@@ -4,3 +4,6 @@ Antigravity IDE.tar.gz
 *.tar.gz
 .vscode/
 .antigravitycli/
+__pycache__/
+*.pyc
+

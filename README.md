@@ -2,7 +2,7 @@
 
 Native installation and packaging utility for running **Antigravity 2.0 Agent** and **Antigravity 2.0 IDE** on Fedora Workstation.
 
-This project supports installation via direct scripts (`install.sh`) or native Fedora RPM packages built locally.
+This project supports installation via direct scripts (`install.sh`) or native Fedora RPM packages built locally. Release versions and download URLs are dynamically and authoritatively derived directly from the official Google release page ([antigravity.google/download](https://antigravity.google/download)), ensuring installations and builds always retrieve the most up-to-date upstream binaries.
 
 ---
 
@@ -34,6 +34,7 @@ Unless `--mode` is specified, the installer runs interactively and prompts you t
 | `--mode` | `ide` \| `agent` | Choose the target variant to install (bypasses interactive menu). |
 | `--user` | *None* | Install to user space (`~/.local`) without requiring root/sudo. |
 | `--url` | `<url>` | Override the default download URL. |
+| `--no-check` | *None* | Skip online release detection and use bundled versions. |
 | `--dry-run` | *None* | Perform validation checks and download the package without writing files. |
 | `-y, --yes` | *None* | Automatically accept prompts during updates or reinstallations. |
 | `-h, --help` | *None* | Display usage guide and exit. |
@@ -80,10 +81,10 @@ The output RPM files will be generated in `~/rpkg/` (or the folder defined by `$
 Install the compiled RPMs via `dnf`:
 ```bash
 # Install the Antigravity Agent
-sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.9.1-*.rpm
+sudo dnf install ~/rpkg/$(uname -m)/antigravity2-*.rpm
 
 # Install the Antigravity IDE
-sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.5.5-*.rpm
+sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-*.rpm
 ```
 
 ---

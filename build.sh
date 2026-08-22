@@ -16,6 +16,11 @@ done
 OUTDIR="${OUTDIR:-$HOME/rpkg/}"
 mkdir -p "$OUTDIR"
 
+# Auto-update specs to latest upstream version if online detector is available
+if [[ -f "$(dirname "$0")/get-latest-versions.py" ]]; then
+    python3 "$(dirname "$0")/get-latest-versions.py" --update-specs || true
+fi
+
 echo "Downloading sources for antigravity2..."
 spectool -gS antigravity2.spec
 

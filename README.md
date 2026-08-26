@@ -15,7 +15,7 @@ The easiest way to install Antigravity is by running the installer directly or u
 **One-liner (No clone required):**
 Run the installer directly from the repository (supports interactive prompts and options):
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/jssroberto/antigravity-2-fedora-installer/main/install.sh) [options]
+bash <(curl -fsSL https://raw.githubusercontent.com/heyhusen/antigravity-2-fedora-installer/main/install.sh) [options]
 ```
 
 **Local script:**

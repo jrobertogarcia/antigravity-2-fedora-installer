@@ -186,7 +186,7 @@ echo -e "${BLUE}Targeting scope: ${BOLD}${INSTALL_SCOPE}${NC}"
 if [[ "$INSTALL_SCOPE" == "system" ]]; then
     TARGET_PARENT_DIR="/opt"
     TARGET_APP_DIR="/opt/${APP_NAME_SHORT}-Linux"
-    TARGET_BIN_PATH="/usr/local/bin/${APP_NAME_SHORT}"
+    TARGET_BIN_PATH="/usr/bin/${APP_NAME_SHORT}"
     DESKTOP_ENTRY_DIR="/usr/share/applications"
     DESKTOP_ENTRY_PATH="${DESKTOP_ENTRY_DIR}/${APP_NAME_SHORT}.desktop"
     ICON_LOOKUP_NAME="antigravity" # Force native asset resource name for desktop styling

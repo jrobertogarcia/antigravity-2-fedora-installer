@@ -11,7 +11,7 @@
 Name:           antigravity2-ide
 Version:        2.5.5
 Release:        1%{?dist}
-Summary:        Antigravity 2.0 IDE
+Summary:        Antigravity IDE
 
 License:        Proprietary (Google Terms of Service)
 URL:            https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/index.html
@@ -26,8 +26,8 @@ BuildRequires:  tar
 BuildRequires:  gzip
 
 %description
-Antigravity 2.0 IDE repackaged for Fedora.
-Experience liftoff (v2.0 Standalone IDE).
+Antigravity IDE standalone development environment repackaged for Fedora.
+Experience liftoff (IDE).
 
 %prep
 %setup -c -T

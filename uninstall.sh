@@ -17,7 +17,7 @@ echo -e "${BLUE}${BOLD}=== Antigravity Uninstaller ===${NC}"
 
 # Default values
 REMOVE_IDE=false
-REMOVE_AGENT=false
+REMOVE_APP=false
 INSTALL_SCOPE="all"
 
 show_help() {
@@ -25,8 +25,8 @@ show_help() {
 Usage: $(basename "$0") [options]
 
 Options:
-  --ide       Uninstall Antigravity 2.0 IDE only.
-  --agent     Uninstall Antigravity 2.0 Agent only.
+  --ide       Uninstall Antigravity IDE only.
+  --app       Uninstall Antigravity 2.0 only.
   --both      Uninstall both variants (complete cleanup).
   --user      Limit scope to user space (~/.local) without requiring root privileges.
   -h, --help  Show this help message.
@@ -40,13 +40,13 @@ while [[ $# -gt 0 ]]; do
             REMOVE_IDE=true
             shift
             ;;
-        --agent)
-            REMOVE_AGENT=true
+        --app|--agent)
+            REMOVE_APP=true
             shift
             ;;
         --both)
             REMOVE_IDE=true
-            REMOVE_AGENT=true
+            REMOVE_APP=true
             shift
             ;;
         --user)
@@ -66,15 +66,15 @@ while [[ $# -gt 0 ]]; do
 done
 
 # --- INTERACTIVE MENU ---
-if [[ "$REMOVE_IDE" == "false" && "$REMOVE_AGENT" == "false" ]]; then
+if [[ "$REMOVE_IDE" == "false" && "$REMOVE_APP" == "false" ]]; then
     if [[ ! -t 0 ]]; then
-        echo -e "${RED}Error: Standard input is not a terminal. Please specify what to remove using --ide, --agent, or --both.${NC}" >&2
+        echo -e "${RED}Error: Standard input is not a terminal. Please specify what to remove using --ide, --app, or --both.${NC}" >&2
         exit 1
     fi
 
     echo -e "\n${BOLD}Select what you want to uninstall:${NC}"
-    echo -e "  ${GREEN}1)${NC} Uninstall Antigravity 2.0 ${BOLD}IDE${NC} only"
-    echo -e "  ${GREEN}2)${NC} Uninstall Antigravity 2.0 ${BOLD}Agent${NC} only"
+    echo -e "  ${GREEN}1)${NC} Uninstall ${BOLD}Antigravity IDE${NC} only"
+    echo -e "  ${GREEN}2)${NC} Uninstall ${BOLD}Antigravity 2.0${NC} only"
     echo -e "  ${GREEN}3)${NC} Uninstall ${BOLD}Both${NC} (Complete Cleanup)"
     echo -ne "\nEnter an option [1-3]: "
 
@@ -85,11 +85,11 @@ if [[ "$REMOVE_IDE" == "false" && "$REMOVE_AGENT" == "false" ]]; then
             REMOVE_IDE=true
             ;;
         2)
-            REMOVE_AGENT=true
+            REMOVE_APP=true
             ;;
         3)
             REMOVE_IDE=true
-            REMOVE_AGENT=true
+            REMOVE_APP=true
             ;;
         *)
             echo -e "${RED}Invalid option. Canceling uninstallation.${NC}" >&2
@@ -121,8 +121,8 @@ safe_remove() {
 
 # 1. System-wide removal (Requires sudo if components exist, only executed if scope is not "user")
 if [ "$INSTALL_SCOPE" != "user" ]; then
-    if [ "$REMOVE_AGENT" = "true" ]; then
-        echo -e "\n${BLUE}Checking for system-wide Agent components...${NC}"
+    if [ "$REMOVE_APP" = "true" ]; then
+        echo -e "\n${BLUE}Checking for system-wide Antigravity 2.0 components...${NC}"
         safe_remove "/opt/antigravity-Linux" "true"
         safe_remove "/opt/Antigravity-Linux" "true"
         safe_remove "/opt/Antigravity-x64" "true"
@@ -134,7 +134,7 @@ if [ "$INSTALL_SCOPE" != "user" ]; then
     fi
 
     if [ "$REMOVE_IDE" = "true" ]; then
-        echo -e "\n${BLUE}Checking for system-wide IDE components...${NC}"
+        echo -e "\n${BLUE}Checking for system-wide Antigravity IDE components...${NC}"
         safe_remove "/opt/antigravity-ide-Linux" "true"
         safe_remove "/usr/local/bin/antigravity-ide" "true"
         safe_remove "$SYSTEM_DESKTOP_DIR/antigravity-ide.desktop" "true"
@@ -149,8 +149,8 @@ fi
 
 
 # 2. User-local removal (No sudo required)
-if [ "$REMOVE_AGENT" = "true" ]; then
-    echo -e "\n${BLUE}Checking for user-local Agent components...${NC}"
+if [ "$REMOVE_APP" = "true" ]; then
+    echo -e "\n${BLUE}Checking for user-local Antigravity 2.0 components...${NC}"
     safe_remove "$HOME/.local/share/antigravity-Linux" "false"
     safe_remove "$HOME/.local/share/Antigravity-Linux" "false"
     safe_remove "$HOME/.local/share/Antigravity-x64" "false"
@@ -161,7 +161,7 @@ if [ "$REMOVE_AGENT" = "true" ]; then
 fi
 
 if [ "$REMOVE_IDE" = "true" ]; then
-    echo -e "\n${BLUE}Checking for user-local IDE components...${NC}"
+    echo -e "\n${BLUE}Checking for user-local Antigravity IDE components...${NC}"
     safe_remove "$HOME/.local/share/antigravity-ide-Linux" "false"
     safe_remove "$HOME/.local/bin/antigravity-ide" "false"
     safe_remove "$USER_DESKTOP_DIR/antigravity-ide.desktop" "false"

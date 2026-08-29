@@ -11,7 +11,7 @@
 Name:           antigravity2
 Version:        2.11.0
 Release:        1%{?dist}
-Summary:        Antigravity 2.0 Agent
+Summary:        Antigravity 2.0 Desktop Application
 
 License:        Proprietary (Google Terms of Service)
 URL:            https://storage.googleapis.com/antigravity-public/antigravity-hub/index.html
@@ -26,8 +26,8 @@ BuildRequires:  tar
 BuildRequires:  gzip
 
 %description
-Antigravity 2.0 Agent (Background Agent / Hub) repackaged for Fedora.
-Experience liftoff (v2.0 Agent).
+Antigravity 2.0 desktop application repackaged for Fedora.
+Experience liftoff.
 
 %prep
 %setup -c -T

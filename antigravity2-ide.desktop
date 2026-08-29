@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Antigravity 2.0 IDE
+Name=Antigravity IDE
 Comment=Experience liftoff (IDE)
 GenericName=Text Editor
 Exec=/usr/bin/antigravity2-ide --ozone-platform-hint=wayland --enable-features=WaylandWindowDecorations,CanvasOopRasterization --enable-gpu-rasterization --enable-zero-copy %F

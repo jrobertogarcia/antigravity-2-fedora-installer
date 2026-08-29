@@ -7,7 +7,7 @@
 #   ./install.sh [options]
 #
 # Options:
-#   --mode <ide|agent> Choose target application variant.
+#   --mode <ide|app>   Choose target application variant.
 #   --user             Install to user space (~/.local) without requiring root privileges.
 #   --url <url>        Override the default download URL.
 #   --dry-run          Run pre-flight checks and download the package but do not write any files.
@@ -28,15 +28,15 @@ INSTALL_SCOPE="system"
 APP_MODE="" # Starts empty to force interaction if not provided
 
 VERSION_IDE="2.5.5"
-VERSION_AGENT="2.11.0"
+VERSION_APP="2.11.0"
 APP_VERSION=""
 
 DOWNLOAD_URL_IDE_X64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.5.5-4923483625488384/linux-x64/Antigravity%20IDE.tar.gz"
 DOWNLOAD_URL_IDE_ARM64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.5.5-4923483625488384/linux-arm/Antigravity%20IDE.tar.gz"
-DOWNLOAD_URL_AGENT_X64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.11.0-6376446768316416/linux-x64/Antigravity.tar.gz"
-DOWNLOAD_URL_AGENT_ARM64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.11.0-6376446768316416/linux-arm/Antigravity.tar.gz"
+DOWNLOAD_URL_APP_X64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.11.0-6376446768316416/linux-x64/Antigravity.tar.gz"
+DOWNLOAD_URL_APP_ARM64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.11.0-6376446768316416/linux-arm/Antigravity.tar.gz"
 DOWNLOAD_URL_IDE=""
-DOWNLOAD_URL_AGENT=""
+DOWNLOAD_URL_APP=""
 
 DRY_RUN=false
 TEMP_DIR=""
@@ -63,7 +63,7 @@ show_help() {
 Usage: $(basename "$0") [options]
 
 Options:
-  --mode <ide|agent> Choose target application variant.
+  --mode <ide|app>   Choose target application variant (options: ide, app).
   --user             Install to user space (~/.local) without requiring root privileges.
   --url <url>        Override the default download URL.
   --dry-run          Perform pre-flight checks and package download only. No files written.
@@ -76,11 +76,15 @@ EOF
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --mode)
-            if [[ -n "${2:-}" && ( "$2" == "ide" || "$2" == "agent" ) ]]; then
-                APP_MODE="$2"
+            if [[ -n "${2:-}" && ( "$2" == "ide" || "$2" == "app" || "$2" == "agent" ) ]]; then
+                if [[ "$2" == "agent" ]]; then
+                    APP_MODE="app"
+                else
+                    APP_MODE="$2"
+                fi
                 shift 2
             else
-                echo -e "${RED}Error: --mode requires a value: 'ide' or 'agent'.${NC}" >&2
+                echo -e "${RED}Error: --mode requires a value: 'ide' or 'app'.${NC}" >&2
                 exit 1
             fi
             ;;
@@ -117,17 +121,17 @@ while [[ $# -gt 0 ]]; do
         esac
 done
 
-echo -e "${BLUE}${BOLD}=== Antigravity 2.0 Installer ===${NC}"
+echo -e "${BLUE}${BOLD}=== Antigravity Installer ===${NC}"
 
 # --- INTERACTIVE MENU ---
 if [[ -z "$APP_MODE" ]]; then
     if [[ ! -t 0 ]]; then
-        echo -e "${RED}Error: Standard input is not a terminal. Please specify --mode <ide|agent>.${NC}" >&2
+        echo -e "${RED}Error: Standard input is not a terminal. Please specify --mode <ide|app>.${NC}" >&2
         exit 1
     fi
-    echo -e "\n${BOLD}Select the version you want to install:${NC}"
-    echo -e "  ${GREEN}1)${NC} Antigravity 2.0 ${BOLD}IDE${NC} (Development Environment)"
-    echo -e "  ${GREEN}2)${NC} Antigravity 2.0 ${BOLD}Agent${NC} (Background Agent / Hub)"
+    echo -e "\n${BOLD}Select the application you want to install:${NC}"
+    echo -e "  ${GREEN}1)${NC} ${BOLD}Antigravity IDE${NC}"
+    echo -e "  ${GREEN}2)${NC} ${BOLD}Antigravity 2.0${NC} (Desktop App)"
     echo -ne "\nEnter an option [1-2]: "
 
     read -r OPTION
@@ -137,7 +141,7 @@ if [[ -z "$APP_MODE" ]]; then
             APP_MODE="ide"
             ;;
         2)
-            APP_MODE="agent"
+            APP_MODE="app"
             ;;
         *)
             echo -e "${RED}Invalid option. Canceling installation.${NC}" >&2
@@ -156,27 +160,29 @@ fi
 # Dynamic URL Selection based on architecture
 if [[ "$ARCH" == "aarch64" ]]; then
     DOWNLOAD_URL_IDE="$DOWNLOAD_URL_IDE_ARM64"
-    DOWNLOAD_URL_AGENT="$DOWNLOAD_URL_AGENT_ARM64"
+    DOWNLOAD_URL_APP="$DOWNLOAD_URL_APP_ARM64"
 else
     DOWNLOAD_URL_IDE="$DOWNLOAD_URL_IDE_X64"
-    DOWNLOAD_URL_AGENT="$DOWNLOAD_URL_AGENT_X64"
+    DOWNLOAD_URL_APP="$DOWNLOAD_URL_APP_X64"
 fi
 
 # Define dynamic variables based on selected mode
 if [[ "$APP_MODE" == "ide" ]]; then
     APP_NAME_SHORT="antigravity-ide"
-    APP_NAME_PRETTY="Antigravity 2.0 IDE"
-    APP_COMMENT="Experience liftoff (v2.0 Standalone IDE)"
+    APP_NAME_PRETTY="Antigravity IDE"
+    APP_COMMENT="Experience liftoff (IDE)"
+    APP_WMCLASS="antigravity-ide"
     BINARY_NAME="antigravity-ide"
     APP_VERSION="$VERSION_IDE"
     [[ -z "$DOWNLOAD_URL" ]] && DOWNLOAD_URL="$DOWNLOAD_URL_IDE"
 else
     APP_NAME_SHORT="antigravity"
-    APP_NAME_PRETTY="Antigravity 2.0 Agent"
-    APP_COMMENT="Experience liftoff (v2.0 Agent)"
+    APP_NAME_PRETTY="Antigravity 2.0"
+    APP_COMMENT="Experience liftoff"
+    APP_WMCLASS="Antigravity"
     BINARY_NAME="antigravity"
-    APP_VERSION="$VERSION_AGENT"
-    [[ -z "$DOWNLOAD_URL" ]] && DOWNLOAD_URL="$DOWNLOAD_URL_AGENT"
+    APP_VERSION="$VERSION_APP"
+    [[ -z "$DOWNLOAD_URL" ]] && DOWNLOAD_URL="$DOWNLOAD_URL_APP"
 fi
 
 echo -e "\n${BLUE}Selected variant: ${BOLD}${APP_NAME_PRETTY}${NC}"
@@ -470,7 +476,7 @@ Terminal=false
 Categories=Development;IDE;TextEditor;
 MimeType=application/x-antigravity-workspace;
 StartupNotify=true
-StartupWMClass=Antigravity
+StartupWMClass=__WMCLASS__
 Actions=new-empty-window;
 Keywords=vscode;
 
@@ -484,6 +490,7 @@ sed -i "s|__NAME__|$APP_NAME_PRETTY|g" "$TEMP_DESKTOP"
 sed -i "s|__COMMENT__|$APP_COMMENT|g" "$TEMP_DESKTOP"
 sed -i "s|__EXEC_PATH__|$TARGET_BIN_PATH|g" "$TEMP_DESKTOP"
 sed -i "s|__ICON_PATH__|$ICON_LOOKUP_NAME|g" "$TEMP_DESKTOP"
+sed -i "s|__WMCLASS__|$APP_WMCLASS|g" "$TEMP_DESKTOP"
 
 # Install desktop file to applications folder
 escalate_cmd mkdir -p "$DESKTOP_ENTRY_DIR"

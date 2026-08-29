@@ -1,6 +1,6 @@
 # Antigravity 2.0 Fedora Installer
 
-Native installation and packaging utility for running **Antigravity 2.0 Agent** and **Antigravity 2.0 IDE** on Fedora Workstation.
+Native installation and packaging utility for running **Antigravity 2.0** and **Antigravity IDE** on Fedora Workstation.
 
 This project supports installation via direct scripts (`install.sh`) or native Fedora RPM packages built locally.
 
@@ -25,13 +25,13 @@ Clone the repository and run the script:
 ```
 
 Unless `--mode` is specified, the installer runs interactively and prompts you to select the target variant:
-1. **Antigravity 2.0 IDE** (Development Environment)
-2. **Antigravity 2.0 Agent** (Background Agent / Hub)
+1. **Antigravity IDE**
+2. **Antigravity 2.0** (Desktop App)
 
 ### Command-Line Arguments
 | Option | Argument | Description |
 | :--- | :--- | :--- |
-| `--mode` | `ide` \| `agent` | Choose the target variant to install (bypasses interactive menu). |
+| `--mode` | `ide` \| `app` | Choose the target variant to install (bypasses interactive menu). |
 | `--user` | *None* | Install to user space (`~/.local`) without requiring root/sudo. |
 | `--url` | `<url>` | Override the default download URL. |
 | `--dry-run` | *None* | Perform validation checks and download the package without writing files. |
@@ -66,11 +66,11 @@ sudo dnf install -y spectool rpkg tar gzip
 
 ### 2. Build the RPMs
 Run the corresponding build script to download the upstream archives and package them locally:
-*   **Build Agent RPM (`antigravity2`)**:
+*   **Build Antigravity 2.0 RPM (`antigravity2`)**:
     ```bash
     ./build.sh
     ```
-*   **Build IDE RPM (`antigravity2-ide`)**:
+*   **Build Antigravity IDE RPM (`antigravity2-ide`)**:
     ```bash
     ./build-ide.sh
     ```
@@ -79,10 +79,10 @@ The output RPM files will be generated in `~/rpkg/` (or the folder defined by `$
 ### 3. Install the RPMs
 Install the compiled RPMs via `dnf`:
 ```bash
-# Install the Antigravity Agent
+# Install Antigravity 2.0
 sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.11.0-*.rpm
 
-# Install the Antigravity IDE
+# Install Antigravity IDE
 sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.5.5-*.rpm
 ```
 
@@ -94,8 +94,8 @@ The CLI command name depends on your chosen installation method:
 
 | Application | Installed via Script (`install.sh`) | Installed via RPM |
 | :--- | :--- | :--- |
-| **Antigravity 2.0 Agent** | `antigravity` | `antigravity2` |
-| **Antigravity 2.0 IDE** | `antigravity-ide` | `antigravity2-ide` |
+| **Antigravity 2.0** | `antigravity` | `antigravity2` |
+| **Antigravity IDE** | `antigravity-ide` | `antigravity2-ide` |
 
 ### Wayland & Performance Optimizations
 The generated desktop entries run Chromium/Electron using native Wayland flags for accelerated hardware rendering:
@@ -115,7 +115,7 @@ Use the [uninstall.sh](uninstall.sh) utility to cleanly remove all files, direct
 ```bash
 ./uninstall.sh [options]
 ```
-*   **CLI Options**: `--ide` (IDE only), `--agent` (Agent only), `--both` (complete cleanup), or `--user` (limit scope to user space).
+*   **CLI Options**: `--ide` (IDE only), `--app` (Antigravity 2.0 only), `--both` (complete cleanup), or `--user` (limit scope to user space).
 *   **Interactive Menu**: Run `./uninstall.sh` without options to choose via terminal prompt.
 
 #### RPM-Based Uninstallation

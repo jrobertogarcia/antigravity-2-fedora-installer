@@ -28,13 +28,13 @@ INSTALL_SCOPE="system"
 APP_MODE="" # Starts empty to force interaction if not provided
 
 VERSION_IDE="2.5.5"
-VERSION_APP="2.12.2"
+VERSION_APP="2.13.0"
 APP_VERSION=""
 
 DOWNLOAD_URL_IDE_X64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.5.5-4923483625488384/linux-x64/Antigravity%20IDE.tar.gz"
 DOWNLOAD_URL_IDE_ARM64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.5.5-4923483625488384/linux-arm/Antigravity%20IDE.tar.gz"
-DOWNLOAD_URL_APP_X64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.12.2-6298742303883264/linux-x64/Antigravity.tar.gz"
-DOWNLOAD_URL_APP_ARM64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.12.2-6298742303883264/linux-arm/Antigravity.tar.gz"
+DOWNLOAD_URL_APP_X64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.13.0-6362815968182272/linux-x64/Antigravity.tar.gz"
+DOWNLOAD_URL_APP_ARM64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.13.0-6362815968182272/linux-arm/Antigravity.tar.gz"
 DOWNLOAD_URL_IDE=""
 DOWNLOAD_URL_APP=""
 

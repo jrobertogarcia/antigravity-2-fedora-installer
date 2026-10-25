@@ -10,7 +10,7 @@ Terminal=false
 Categories=Development;IDE;TextEditor;
 MimeType=application/x-antigravity-workspace;
 StartupNotify=true
-StartupWMClass=Antigravity
+StartupWMClass=antigravity
 Actions=new-empty-window;
 
 [Desktop Action new-empty-window]

@@ -83,7 +83,7 @@ Install the compiled RPMs via `dnf`:
 sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.26.0-*.rpm
 
 # Install Antigravity IDE
-sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.5.5-*.rpm
+sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.6.0-*.rpm
 ```
 
 ---

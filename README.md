@@ -80,7 +80,7 @@ The output RPM files will be generated in `~/rpkg/` (or the folder defined by `$
 Install the compiled RPMs via `dnf`:
 ```bash
 # Install Antigravity 2.0
-sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.28.2-*.rpm
+sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.29.0-*.rpm
 
 # Install Antigravity IDE
 sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.6.0-*.rpm

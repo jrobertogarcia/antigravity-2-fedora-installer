@@ -10,17 +10,16 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: check-updates
+  cancel-in-progress: false
+
 jobs:
   check-and-update:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
-
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: '3.x'
 
       - name: Check for updates and apply changes
         id: check

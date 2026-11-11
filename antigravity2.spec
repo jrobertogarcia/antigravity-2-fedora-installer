@@ -14,7 +14,7 @@ Release:        1%{?dist}
 Summary:        Antigravity 2.0 Desktop Application
 
 License:        Proprietary (Google Terms of Service)
-URL:            https://storage.googleapis.com/antigravity-public/antigravity-hub/index.html
+URL:            https://antigravity.google/download
 ExclusiveArch:  x86_64 aarch64
 
 Source0:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.31.1-6044591015723008/linux-x64/Antigravity.tar.gz#/Antigravity-x64.tar.gz

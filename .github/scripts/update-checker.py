@@ -17,6 +17,10 @@ ENDPOINTS = {
     "ide": "https://antigravity-ide-auto-updater-974169037036.us-central1.run.app/releases",
 }
 
+# Same checks antigravity.google/download applies to these feeds; the values are written into spec and shell files.
+VERSION_RE = re.compile(r"\d+\.\d+\.\d+")
+EXEC_ID_RE = re.compile(r"\d+")
+
 
 def fetch_latest_release(target: str):
     url = ENDPOINTS[target]
@@ -26,9 +30,18 @@ def fetch_latest_release(target: str):
     )
     with urllib.request.urlopen(req, timeout=15) as resp:
         data = json.loads(resp.read().decode("utf-8"))
-        if not data or not isinstance(data, list):
-            raise ValueError(f"Invalid response from {url}: {data}")
-        return data[0]["version"], str(data[0]["execution_id"])
+    releases = data.get("versions") if isinstance(data, dict) else data
+    if not isinstance(releases, list) or not releases or not isinstance(releases[0], dict):
+        raise ValueError(f"Invalid response from {url}: {data!r}")
+    version = releases[0].get("version")
+    exec_id = str(releases[0].get("execution_id", ""))
+    if not isinstance(version, str) or not VERSION_RE.fullmatch(version) or not EXEC_ID_RE.fullmatch(exec_id):
+        raise ValueError(f"Unexpected release entry from {url}: {releases[0]!r}")
+    return version, exec_id
+
+
+def version_key(version: str):
+    return tuple(int(part) for part in version.split("."))
 
 
 def get_current_spec_version(spec_path: str) -> str:
@@ -62,6 +75,7 @@ def update_app(repo_dir: str, new_ver: str, exec_id: str):
         spec = f.read()
 
     spec = re.sub(r"^Version:\s*.*$", f"Version:        {new_ver}", spec, flags=re.MULTILINE)
+    spec = re.sub(r"^Release:\s*.*$", "Release:        1%{?dist}", spec, flags=re.MULTILINE)
     new_src0 = f"Source0:        https://storage.googleapis.com/antigravity-public/antigravity-hub/{new_ver}-{exec_id}/linux-x64/Antigravity.tar.gz#/Antigravity-x64.tar.gz"
     new_src1 = f"Source1:        https://storage.googleapis.com/antigravity-public/antigravity-hub/{new_ver}-{exec_id}/linux-arm/Antigravity.tar.gz#/Antigravity-arm64.tar.gz"
     spec = re.sub(r"^Source0:\s*.*$", new_src0, spec, flags=re.MULTILINE)
@@ -71,7 +85,7 @@ def update_app(repo_dir: str, new_ver: str, exec_id: str):
     date_str = datetime.datetime.now().strftime("%a %b %d %Y")
     changelog_entry = (
         f"%changelog\n"
-        f"* {date_str} github-actions[bot] <actions@github.com> - {new_ver}-1\n"
+        f"* {date_str} github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - {new_ver}-1\n"
         f"- Update to version {new_ver} with new GCS download URLs\n\n"
     )
     spec = spec.replace("%changelog\n", changelog_entry, 1)
@@ -116,6 +130,7 @@ def update_ide(repo_dir: str, new_ver: str, exec_id: str):
         spec = f.read()
 
     spec = re.sub(r"^Version:\s*.*$", f"Version:        {new_ver}", spec, flags=re.MULTILINE)
+    spec = re.sub(r"^Release:\s*.*$", "Release:        1%{?dist}", spec, flags=re.MULTILINE)
     new_src0 = f"Source0:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/{new_ver}-{exec_id}/linux-x64/Antigravity%20IDE.tar.gz#/Antigravity-IDE-x64.tar.gz"
     new_src1 = f"Source1:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/{new_ver}-{exec_id}/linux-arm/Antigravity%20IDE.tar.gz#/Antigravity-IDE-arm64.tar.gz"
     spec = re.sub(r"^Source0:\s*.*$", new_src0, spec, flags=re.MULTILINE)
@@ -125,7 +140,7 @@ def update_ide(repo_dir: str, new_ver: str, exec_id: str):
     date_str = datetime.datetime.now().strftime("%a %b %d %Y")
     changelog_entry = (
         f"%changelog\n"
-        f"* {date_str} github-actions[bot] <actions@github.com> - {new_ver}-1\n"
+        f"* {date_str} github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - {new_ver}-1\n"
         f"- Update to version {new_ver} with new download URLs\n\n"
     )
     spec = spec.replace("%changelog\n", changelog_entry, 1)
@@ -187,7 +202,10 @@ def main():
 
         print(f"[{target_name}] Current local: {current_ver} | Upstream latest: {latest_ver} (execution_id: {exec_id})")
 
-        if current_ver != latest_ver:
+        if version_key(latest_ver) < version_key(current_ver):
+            # RPM won't downgrade installed users without an Epoch, so following an upstream rollback helps no one.
+            print(f"{target_name}: local {current_ver} is newer than upstream {latest_ver}; skipping.")
+        elif version_key(latest_ver) > version_key(current_ver):
             print(f"Update available for {target_name}: {current_ver} -> {latest_ver}")
             updates[t] = {
                 "name": target_name,

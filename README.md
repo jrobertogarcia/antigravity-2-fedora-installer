@@ -5,17 +5,18 @@ Install Antigravity 2.0 or Antigravity IDE on Fedora, with a script or as an RPM
 ## Install with the script
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/jssroberto/antigravity-2-fedora-installer/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/jrobertogarcia/antigravity-2-fedora-installer/main/install.sh)
 ```
 
 Or, from a clone of this repository, run `./install.sh`. Options go at the end of either command.
 
-The script asks which app to install; `--mode ide` or `--mode app` skips the question.
+The script asks which app to install; `--mode app` or `--mode ide` skips the question.
 
-- `--mode ide|app`: install Antigravity IDE or Antigravity 2.0.
+- `--mode app|ide`: install Antigravity 2.0 or Antigravity IDE.
 - `--user`: install for the current user only, without sudo.
 - `--dry-run`: run the checks and download the package without installing.
 - `-y`, `--yes`: answer yes to prompts.
+- `--url <url>`: override the default download URL.
 
 `./install.sh --help` lists all options.
 
@@ -45,7 +46,7 @@ If Antigravity 1.x is installed, `install.sh` keeps its launcher as `<name>-lega
 
 ## Uninstall
 
-From a clone of this repository, [uninstall.sh](uninstall.sh) asks what to remove; pass `--ide`, `--app` or `--both` to skip the question, and `--user` for a user install.
+From a clone of this repository, `uninstall.sh` asks what to remove; pass `--app`, `--ide` or `--both` to skip the question, and `--user` for a user install.
 
 ```bash
 ./uninstall.sh

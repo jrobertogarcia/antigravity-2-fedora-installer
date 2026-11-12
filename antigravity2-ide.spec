@@ -9,7 +9,7 @@
 
 
 Name:           antigravity2-ide
-Version:        2.6.0
+Version:        2.7.0
 Release:        1%{?dist}
 Summary:        Antigravity IDE
 
@@ -17,8 +17,8 @@ License:        Proprietary (Google Terms of Service)
 URL:            https://antigravity.google/download
 ExclusiveArch:  x86_64 aarch64
 
-Source0:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.6.0-5526304964083712/linux-x64/Antigravity%20IDE.tar.gz#/Antigravity-IDE-x64.tar.gz
-Source1:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.6.0-5526304964083712/linux-arm/Antigravity%20IDE.tar.gz#/Antigravity-IDE-arm64.tar.gz
+Source0:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.7.0-4507555968450560/linux-x64/Antigravity%20IDE.tar.gz#/Antigravity-IDE-x64.tar.gz
+Source1:        https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.7.0-4507555968450560/linux-arm/Antigravity%20IDE.tar.gz#/Antigravity-IDE-arm64.tar.gz
 Source2:        antigravity2-ide.desktop
 Source3:        antigravity.png
 
@@ -82,6 +82,9 @@ install -m 644 %{SOURCE3} %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{n
 %{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 
 %changelog
+* Thu Nov 12 2026 github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - 2.7.0-1
+- Update to version 2.7.0 with new download URLs
+
 * Sat Oct 31 2026 FJduFou - 2.6.0-1
 - Update to version 2.6.0 with new download URLs
 

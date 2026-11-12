@@ -27,14 +27,14 @@ NC='\033[0m' # No Color
 INSTALL_SCOPE="system"
 APP_MODE="" # Starts empty to force interaction if not provided
 
-VERSION_IDE="2.6.0"
-VERSION_APP="2.31.1"
+VERSION_IDE="2.7.0"
+VERSION_APP="2.31.2"
 APP_VERSION=""
 
-DOWNLOAD_URL_IDE_X64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.6.0-5526304964083712/linux-x64/Antigravity%20IDE.tar.gz"
-DOWNLOAD_URL_IDE_ARM64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.6.0-5526304964083712/linux-arm/Antigravity%20IDE.tar.gz"
-DOWNLOAD_URL_APP_X64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.31.1-6044591015723008/linux-x64/Antigravity.tar.gz"
-DOWNLOAD_URL_APP_ARM64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.31.1-6044591015723008/linux-arm/Antigravity.tar.gz"
+DOWNLOAD_URL_IDE_X64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.7.0-4507555968450560/linux-x64/Antigravity%20IDE.tar.gz"
+DOWNLOAD_URL_IDE_ARM64="https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/2.7.0-4507555968450560/linux-arm/Antigravity%20IDE.tar.gz"
+DOWNLOAD_URL_APP_X64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.31.2-6470801290035200/linux-x64/Antigravity.tar.gz"
+DOWNLOAD_URL_APP_ARM64="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.31.2-6470801290035200/linux-arm/Antigravity.tar.gz"
 DOWNLOAD_URL_IDE=""
 DOWNLOAD_URL_APP=""
 

@@ -25,6 +25,8 @@ Run `antigravity` (app) or `antigravity-ide` (IDE).
 
 ## Install as an RPM
 
+From a clone of this repository:
+
 ```bash
 sudo dnf install -y spectool rpkg tar gzip
 ./build.sh       # Antigravity 2.0
@@ -33,7 +35,7 @@ sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.31.2-*.rpm
 sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.7.0-*.rpm
 ```
 
-Build and install only the one you want. Packages land in `~/rpkg/`; set `OUTDIR` to change that.
+Build and install only the one you want. Packages land in `~/rpkg/`; set `OUTDIR` to change that, and use that path in the `dnf install` lines.
 
 Run `antigravity2` or `antigravity2-ide`.
 
@@ -43,7 +45,7 @@ If Antigravity 1.x is installed, `install.sh` keeps its launcher as `<name>-lega
 
 ## Uninstall
 
-[uninstall.sh](uninstall.sh) asks what to remove, or pass `--ide`, `--app` or `--both`. Add `--user` for a user install.
+From a clone of this repository, [uninstall.sh](uninstall.sh) asks what to remove; pass `--ide`, `--app` or `--both` to skip the question, and `--user` for a user install.
 
 ```bash
 ./uninstall.sh

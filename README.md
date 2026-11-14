@@ -32,7 +32,7 @@ From a clone of this repository:
 sudo dnf install -y spectool rpkg tar gzip
 ./build.sh       # Antigravity 2.0
 ./build-ide.sh   # Antigravity IDE
-sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.31.2-*.rpm
+sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.32.1-*.rpm
 sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.7.0-*.rpm
 ```
 

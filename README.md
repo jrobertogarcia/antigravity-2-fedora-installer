@@ -33,7 +33,7 @@ sudo dnf install -y spectool rpkg tar gzip
 ./build.sh       # Antigravity 2.0
 ./build-ide.sh   # Antigravity IDE
 sudo dnf install ~/rpkg/$(uname -m)/antigravity2-2.33.0-*.rpm
-sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.7.0-*.rpm
+sudo dnf install ~/rpkg/$(uname -m)/antigravity2-ide-2.8.0-*.rpm
 ```
 
 Build and install only the one you want. Packages land in `~/rpkg/`; set `OUTDIR` to change that, and use that path in the `dnf install` lines.

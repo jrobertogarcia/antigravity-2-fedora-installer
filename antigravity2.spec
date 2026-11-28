@@ -9,7 +9,7 @@
 
 
 Name:           antigravity2
-Version:        2.35.1
+Version:        2.36.0
 Release:        1%{?dist}
 Summary:        Antigravity 2.0 Desktop Application
 
@@ -17,8 +17,8 @@ License:        Proprietary (Google Terms of Service)
 URL:            https://antigravity.google/download
 ExclusiveArch:  x86_64 aarch64
 
-Source0:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.35.1-4615540875067392/linux-x64/Antigravity.tar.gz#/Antigravity-x64.tar.gz
-Source1:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.35.1-4615540875067392/linux-arm/Antigravity.tar.gz#/Antigravity-arm64.tar.gz
+Source0:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.36.0-5596661662220288/linux-x64/Antigravity.tar.gz#/Antigravity-x64.tar.gz
+Source1:        https://storage.googleapis.com/antigravity-public/antigravity-hub/2.36.0-5596661662220288/linux-arm/Antigravity.tar.gz#/Antigravity-arm64.tar.gz
 Source2:        antigravity2.desktop
 Source3:        antigravity.png
 
@@ -83,6 +83,9 @@ install -m 644 %{SOURCE3} %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{n
 %{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 
 %changelog
+* Sat Nov 28 2026 github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - 2.36.0-1
+- Update to version 2.36.0 with new GCS download URLs
+
 * Wed Nov 25 2026 github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - 2.35.1-1
 - Update to version 2.35.1 with new GCS download URLs
 
